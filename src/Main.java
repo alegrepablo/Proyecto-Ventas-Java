@@ -13,15 +13,17 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Scanner;
+import io.github.cdimascio.dotenv.Dotenv;
 import java.lang.Integer;
 
 public class Main {
     public static void main(String[] args) {
-        String url = "jdbc:mysql://localhost:3306/tienda_deportiva";
-        String usuario = "root";
-        String contraseña = "root";
+        Dotenv dotenv = Dotenv.load();
+        String url = dotenv.get("DB_URL");
+        String usuario = dotenv.get("DB_USUARIO");
+        String contrasena = dotenv.get("DB_CONTRASENA");
 
-        try (Connection conn = DriverManager.getConnection(url, usuario, contraseña)) {
+        try (Connection conn = DriverManager.getConnection(url, usuario, contrasena)) {
             System.out.println("Conexión exitosa a la base de datos MySQL.");
 
             // Instancia vista y DAO

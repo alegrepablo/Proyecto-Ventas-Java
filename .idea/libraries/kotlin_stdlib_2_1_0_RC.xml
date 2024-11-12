@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="kotlin-stdlib-2.1.0-RC">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/kotlin-stdlib-2.1.0-RC.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

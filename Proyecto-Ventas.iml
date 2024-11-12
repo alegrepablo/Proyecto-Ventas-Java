@@ -8,5 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="mysql-connector-j-9.1.0" level="project" />
+    <orderEntry type="library" name="java-dotenv-5.2.2" level="project" />
+    <orderEntry type="library" name="kotlin-stdlib-2.1.0-RC" level="project" />
   </component>
 </module>
