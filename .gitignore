@@ -27,3 +27,8 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+//conexion
+url = "jdbc:mysql://localhost:3306/tienda_deportiva";
+usuario = "root";
+contraseña = "root";
