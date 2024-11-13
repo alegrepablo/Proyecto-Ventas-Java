@@ -4,7 +4,9 @@ import Modelo.Cliente;
 import java.util.List;
 import java.util.Scanner;
 
+// Clase para manejar la interfaz de usuario relacionada con clientes
 public class VistaClientes {
+    // Muestra las opciones del menú de clientes
     public void mostrarMenu() {
         System.out.println("Menú Clientes:");
         System.out.println("1. Agregar Cliente");
@@ -14,37 +16,29 @@ public class VistaClientes {
         System.out.println("5. Volver");
     }
 
+    // Muestra un mensaje general al usuario
     public void mostrarMensaje(String mensaje) {
         System.out.println(mensaje);
     }
 
-    /*public void mostrarClientes(List<Cliente> clientes) {
-        if (clientes.isEmpty()) {
-            System.out.println("No hay clientes disponibles.");
-        } else {
-            System.out.println("Clientes:");
-            for (Cliente cliente : clientes) {
-                System.out.println(cliente);
-            }
-        }
-    }*/
+    // Muestra la lista de clientes en formato de tabla
     public void mostrarClientes(List<Cliente> clientes) {
         if (clientes.isEmpty()) {
             System.out.println("No hay clientes disponibles.");
         } else {
-            // Determinar el ancho de las columnas
+            // Calcula el ancho de las columnas según el contenido
             int idWidth = "ID".length();
             int nombreWidth = "Nombre".length();
             int correoWidth = "Correo".length();
 
-            // Calcular el ancho de cada columna en función del contenido
+            // Ajusta el ancho según los datos más largos
             for (Cliente cliente : clientes) {
                 idWidth = Math.max(idWidth, String.valueOf(cliente.getId()).length());
                 nombreWidth = Math.max(nombreWidth, cliente.getNombre().length());
                 correoWidth = Math.max(correoWidth, cliente.getCorreo().length());
             }
 
-            // Crear el formato de las columnas
+            // Crea y muestra la tabla con formato
             String format = "| %-" + idWidth + "s | %-" + nombreWidth + "s | %-" + correoWidth + "s |\n";
             String line = "+-" + "-".repeat(idWidth) + "-+-" + "-".repeat(nombreWidth) + "-+-" + "-".repeat(correoWidth) + "-+";
 
@@ -63,6 +57,7 @@ public class VistaClientes {
         }
     }
 
+    // Obtiene los datos de un nuevo cliente desde el teclado
     public Cliente obtenerDatosCliente() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Nombre del cliente: ");
@@ -72,16 +67,19 @@ public class VistaClientes {
         return new Cliente(0, nombre, correo); // id se generará automáticamente
     }
 
+    // Solicita y obtiene el ID de un cliente
     public int obtenerIdCliente() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Ingrese el ID del cliente: ");
         return scanner.nextInt();
     }
 
+    // Muestra mensaje de confirmación de actualización
     public void mostrarClienteActualizado() {
         System.out.println("Cliente actualizado correctamente.");
     }
 
+    // Muestra mensaje de confirmación de eliminación
     public void mostrarClienteEliminado() {
         System.out.println("Cliente eliminado correctamente.");
     }

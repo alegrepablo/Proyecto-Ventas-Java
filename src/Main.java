@@ -14,10 +14,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Scanner;
 import io.github.cdimascio.dotenv.Dotenv;
-import java.lang.Integer;
 
 public class Main {
     public static void main(String[] args) {
+        // Configuración de la conexión a la base de datos
         Dotenv dotenv = Dotenv.load();
         String url = dotenv.get("DB_URL");
         String usuario = dotenv.get("DB_USUARIO");
@@ -26,29 +26,26 @@ public class Main {
         try (Connection conn = DriverManager.getConnection(url, usuario, contrasena)) {
             System.out.println("Conexión exitosa a la base de datos MySQL.");
 
-            // Instancia vista y DAO
+            // Inicialización de componentes para gestión de productos
             VistaProductos vistaProductos = new VistaProductos();
             ProductoDAO productoDAO = new ProductoDAO(conn);
             CategoriaDAO categoriaDAO = new CategoriaDAO(conn);
             ControladorProducto controladorProducto = new ControladorProducto(vistaProductos, productoDAO, categoriaDAO);
 
+            // Inicialización de componentes para gestión de clientes
             VistaClientes vistaClientes = new VistaClientes();
             ClienteDAO clienteDAO = new ClienteDAO(conn);
             ControladorCliente controladorCliente = new ControladorCliente(vistaClientes, clienteDAO);
 
+            // Inicialización de componentes para gestión de ventas
             VistaVentas vistaVentas = new VistaVentas();
             VentaDAO ventaDAO = new VentaDAO(conn);
             ControladorVenta controladorVenta = new ControladorVenta(vistaVentas, ventaDAO, productoDAO, clienteDAO);
 
-            // Menú principal
+            // Bucle principal del menú
             boolean salir = false;
             while (!salir) {
-                /*System.out.println("\nMenú Principal:");
-                System.out.println("1. Realizar Venta");
-                System.out.println("2. Mostrar Ventas");
-                System.out.println("3. Gestionar Productos");
-                System.out.println("4. Gestionar Clientes");
-                System.out.println("5. Salir");*/
+                // Diseño del menú principal con bordes
                 System.out.println("\n+--------------------- Menú Principal ---------------------+");
                 System.out.printf("| %-54s |\n", "1. Realizar Venta");
                 System.out.printf("| %-54s |\n", "2. Mostrar Ventas");
@@ -57,7 +54,9 @@ public class Main {
                 System.out.printf("| %-54s |\n", "5. Salir");
                 System.out.println("+---------------------------------------------------------+");
                 System.out.print("Seleccione una opción: ");
+                // Lectura de la opción del usuario
                 int opcion = new Scanner(System.in).nextInt();
+                // Manejo de las diferentes opciones del menú
                 switch (opcion) {
                     case 1:
                         controladorVenta.realizarVenta();
@@ -79,6 +78,7 @@ public class Main {
                 }
             }
         } catch (SQLException e) {
+            // Manejo de errores de conexión a la base de datos
             System.out.println("Error de conexión: " + e.getMessage());
         }
     }

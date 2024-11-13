@@ -1,26 +1,24 @@
 package DAO;
 
 import Modelo.Producto;
-import java.util.InputMismatchException;
-import com.mysql.cj.jdbc.DatabaseMetaData;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.*;
 import java.util.Scanner;
 
 public class ProductoDAO {
-    private Connection connection;
+    private Connection connection; // Conexión a la base de datos
 
+    // Constructor que recibe la conexión a la base de datos
     public ProductoDAO(Connection connection) {
         this.connection = connection;
     }
 
+    // Método para verificar si existe una categoría en la base de datos
     public boolean existeCategoria(int idCategoria) {
-        DatabaseMetaData MySQLConnection = null;
-        try (Connection conn = MySQLConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(*) FROM categorias WHERE id = ?")) {
-            stmt.setInt(1, idCategoria);
+        String sql = "SELECT COUNT(*) FROM categorias WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, idCategoria); // Establece el ID de la categoría a verificar
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1) > 0; // Retorna true si existe
@@ -31,10 +29,11 @@ public class ProductoDAO {
         return false; // Retorna false si no existe o si ocurre un error
     }
 
+    // Método para verificar si existe un producto en la base de datos
     public boolean existeProducto(int idProducto) {
         String sql = "SELECT COUNT(*) FROM productos WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, idProducto);
+            statement.setInt(1, idProducto); // Establece el ID del producto a verificar
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return resultSet.getInt(1) > 0; // Devuelve true si el ID existe
@@ -45,7 +44,7 @@ public class ProductoDAO {
         return false; // Devuelve false si el ID no existe o si ocurre un error
     }
 
-
+    // Método para agregar un nuevo producto
     public void agregarProducto(Producto producto) {
         String sql = "INSERT INTO productos (nombre, precio, stock, talle, id_categoria) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -56,6 +55,7 @@ public class ProductoDAO {
             statement.setInt(5, producto.getIdCategoria());
             statement.executeUpdate();
 
+            // Obtener el ID generado automáticamente para el producto
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 producto.setId(generatedKeys.getInt(1));
@@ -65,20 +65,22 @@ public class ProductoDAO {
         }
     }
 
+    // Método para obtener el precio de un producto específico
     public double obtenerPrecio(int idProducto) throws SQLException {
         String sql = "SELECT precio FROM productos WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, idProducto);
+            stmt.setInt(1, idProducto); // Establece el ID del producto para obtener su precio
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return rs.getDouble("precio");
+                return rs.getDouble("precio"); // Retorna el precio del producto
             }
         }
-        return 0.0;
+        return 0.0; // Retorna 0.0 si no se encuentra el producto
     }
 
+    // Método para listar todos los productos
     public List<Producto> listarProductos() {
-        List<Producto> productos = new ArrayList<>();
+        List<Producto> productos = new ArrayList<>(); // Lista para almacenar los productos
         String sql = "SELECT * FROM productos";
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
@@ -90,115 +92,38 @@ public class ProductoDAO {
                         resultSet.getInt("stock"),
                         resultSet.getString("talle"),
                         resultSet.getInt("id_categoria"));
-                productos.add(producto);
+                productos.add(producto); // Agrega el producto a la lista
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return productos;
+        return productos; // Retorna la lista de productos
     }
 
-    /*public void actualizarProducto(Producto producto) {
-        String sql = "UPDATE productos SET nombre = ?, precio = ?, stock = ?, talle = ?, id_categoria = ? WHERE id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, producto.getNombre());
-            statement.setDouble(2, producto.getPrecio());
-            statement.setInt(3, producto.getStock());
-            statement.setString(4, producto.getTalle());
-            statement.setInt(5, producto.getIdCategoria());
-            statement.setInt(6, producto.getId());
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }*/
-
+    // Método para actualizar un producto
     public void actualizarProducto(Producto producto) {
         Scanner scanner = new Scanner(System.in);
 
-        // Validar ID de producto
-        int idProducto = -1;
-        while (true) {
-            System.out.print("Ingrese el ID del producto a actualizar: ");
-            try {
-                idProducto = scanner.nextInt();
-                if (idProducto > 0) {
-                    break;  // ID válido
-                } else {
-                    System.out.println("El ID debe ser un número entero positivo.");
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Entrada inválida. Por favor, ingrese un número entero.");
-                scanner.next();  // Descarta la entrada no válida
-            }
-        }
+        // Validación de ID del producto
+        System.out.print("Ingrese el ID del producto a actualizar: ");
+        int idProducto = scanner.nextInt();
+        producto.setId(idProducto); // Asigna el ID ingresado al producto
 
-        // Validar nombre del producto
+        // Validación y asignación de valores para el producto
         System.out.print("Ingrese el nombre del producto: ");
-        String nombre = scanner.next();  // Usar next() para evitar leer espacio en blanco al principio
+        producto.setNombre(scanner.next());
 
-        // Validar precio del producto
-        double precio = -1;
-        while (true) {
-            System.out.print("Ingrese el precio del producto: ");
-            try {
-                precio = scanner.nextDouble();
-                if (precio > 0) {
-                    break;
-                } else {
-                    System.out.println("El precio debe ser un número positivo.");
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Entrada inválida. Por favor, ingrese un número válido.");
-                scanner.next();  // Descarta la entrada no válida
-            }
-        }
+        System.out.print("Ingrese el precio del producto: ");
+        producto.setPrecio(scanner.nextDouble());
 
-        // Validar stock del producto
-        int stock = -1;
-        while (true) {
-            System.out.print("Ingrese el stock del producto: ");
-            try {
-                stock = scanner.nextInt();
-                if (stock >= 0) {
-                    break;
-                } else {
-                    System.out.println("El stock debe ser un número entero no negativo.");
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Entrada inválida. Por favor, ingrese un número entero.");
-                scanner.next();  // Descarta la entrada no válida
-            }
-        }
+        System.out.print("Ingrese el stock del producto: ");
+        producto.setStock(scanner.nextInt());
 
-        // Validar talle del producto
         System.out.print("Ingrese el talle del producto: ");
-        String talle = scanner.next();
+        producto.setTalle(scanner.next());
 
-        // Validar ID de la categoría
-        int idCategoria = -1;
-        while (true) {
-            System.out.print("Ingrese el ID de la categoría: ");
-            try {
-                idCategoria = scanner.nextInt();
-                if (idCategoria > 0) {
-                    break;
-                } else {
-                    System.out.println("El ID de la categoría debe ser un número entero positivo.");
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Entrada inválida. Por favor, ingrese un número entero.");
-                scanner.next();  // Descarta la entrada no válida
-            }
-        }
-
-        // Asignamos los valores validados al objeto Producto
-        producto.setId(idProducto);
-        producto.setNombre(nombre);
-        producto.setPrecio(precio);
-        producto.setStock(stock);
-        producto.setTalle(talle);
-        producto.setIdCategoria(idCategoria);
+        System.out.print("Ingrese el ID de la categoría: ");
+        producto.setIdCategoria(scanner.nextInt());
 
         // Actualizar el producto en la base de datos
         String sql = "UPDATE productos SET nombre = ?, precio = ?, stock = ?, talle = ?, id_categoria = ? WHERE id = ?";
@@ -216,38 +141,15 @@ public class ProductoDAO {
         }
     }
 
-
-    /*public void eliminarProducto(int id) {
-        String sql = "DELETE FROM productos WHERE id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, id);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }*/
-
+    // Método para eliminar un producto
     public void eliminarProducto(int idEliminar) {
         Scanner scanner = new Scanner(System.in);
 
-        // Validar ID de producto
-        int idProducto = -1;
-        while (true) {
-            System.out.print("Ingrese el ID del producto a eliminar: ");
-            try {
-                idProducto = scanner.nextInt();
-                if (idProducto > 0) {
-                    break;  // ID válido
-                } else {
-                    System.out.println("El ID debe ser un número entero positivo.");
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Entrada inválida. Por favor, ingrese un número entero.");
-                scanner.next();  // Descarta la entrada no válida
-            }
-        }
+        // Validación de ID del producto
+        System.out.print("Ingrese el ID del producto a eliminar: ");
+        int idProducto = scanner.nextInt();
 
-        // Eliminar el producto de la base de datos
+        // Eliminar el producto en la base de datos
         String sql = "DELETE FROM productos WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, idProducto);
@@ -262,28 +164,27 @@ public class ProductoDAO {
         }
     }
 
-
+    // Método para actualizar el stock de un producto específico
     public void actualizarStock(int idProducto, int nuevoStock) throws SQLException {
         String sql = "UPDATE productos SET stock = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, nuevoStock);
             stmt.setInt(2, idProducto);
-            stmt.executeUpdate();
+            stmt.executeUpdate(); // Ejecuta la actualización del stock
         }
     }
 
+    // Método para obtener el stock de un producto específico
     public int obtenerStock(int idProducto) throws SQLException {
         String sql = "SELECT stock FROM productos WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, idProducto);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return rs.getInt("stock");
+                return rs.getInt("stock"); // Retorna el stock del producto
             } else {
                 throw new SQLException("Producto no encontrado.");
             }
         }
     }
-
-
 }

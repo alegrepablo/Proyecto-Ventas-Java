@@ -1,75 +1,15 @@
-/*package Vista;
-
-import Modelo.Producto;
-import java.util.List;
-import java.util.Scanner;
-
-public class VistaProductos {
-    public void mostrarMenu() {
-        System.out.println("Menú Productos:");
-        System.out.println("1. Agregar Producto");
-        System.out.println("2. Listar Productos");
-        System.out.println("3. Actualizar Producto");
-        System.out.println("4. Eliminar Producto");
-        System.out.println("5. Volver");
-    }
-
-    public void mostrarMensaje(String mensaje) {
-        System.out.println(mensaje);
-    }
-
-    public void mostrarProductos(List<Producto> productos) {
-        if (productos.isEmpty()) {
-            System.out.println("No hay productos disponibles.");
-        } else {
-            System.out.println("Productos:");
-            for (Producto producto : productos) {
-                System.out.println(producto);
-            }
-        }
-    }
-
-    public Producto obtenerDatosProducto() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Nombre del producto: ");
-        String nombre = scanner.nextLine();
-        System.out.print("Precio del producto: ");
-        double precio = scanner.nextDouble();
-        System.out.print("Stock del producto: ");
-        int stock = scanner.nextInt();
-        System.out.print("Talle del producto: ");
-        String talle = scanner.next();
-        System.out.print("ID de la categoría: ");
-        int idCategoria = scanner.nextInt();
-        return new Producto(0, nombre, precio, stock, talle, idCategoria); // id se generará automáticamente
-    }
-
-    public int obtenerIdProducto() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Ingrese el ID del producto: ");
-        return scanner.nextInt();
-    }
-
-    public void mostrarProductoActualizado() {
-        System.out.println("Producto actualizado correctamente.");
-    }
-
-    public void mostrarProductoEliminado() {
-        System.out.println("Producto eliminado correctamente.");
-    }
-} */
-
 package Vista;
 
-import DAO.ProductoDAO;
 import Modelo.Categoria;
 import Modelo.Producto;
 import java.util.List;
 import java.util.Scanner;
 
+// Clase para manejar la interfaz de usuario de productos
 public class VistaProductos {
     private final Scanner scanner = new Scanner(System.in);
 
+    // Muestra las opciones del menú de productos
     public void mostrarMenu() {
         System.out.println("Menú Productos:");
         System.out.println("1. Agregar Producto");
@@ -79,20 +19,12 @@ public class VistaProductos {
         System.out.println("5. Volver");
     }
 
+    // Muestra un mensaje general
     public void mostrarMensaje(String mensaje) {
         System.out.println(mensaje);
     }
 
-    /*public void mostrarProductos(List<Producto> productos) {
-        if (productos.isEmpty()) {
-            System.out.println("No hay productos disponibles.");
-        } else {
-            System.out.println("Productos:");
-            for (Producto producto : productos) {
-                System.out.println(producto);
-            }
-        }
-    }*/
+    // Muestra la lista de productos en formato tabla
     public void mostrarProductos(List<Producto> productos) {
         if (productos.isEmpty()) {
             System.out.println("No hay productos disponibles.");
@@ -135,7 +67,7 @@ public class VistaProductos {
     }
 
 
-
+    // Obtiene los datos de un nuevo producto
     public Producto obtenerDatosProducto() {
         System.out.print("Nombre del producto: ");
         String nombre = scanner.nextLine();
@@ -147,6 +79,7 @@ public class VistaProductos {
         return new Producto(0, nombre, precio, stock, talle, idCategoria);
     }
 
+    // Validación de precio
     private double obtenerPrecioValido() {
         double precio;
         while (true) {
@@ -167,6 +100,7 @@ public class VistaProductos {
         return precio;
     }
 
+    // Validación de stock
     private int obtenerStockValido() {
         int stock;
         while (true) {
@@ -187,6 +121,7 @@ public class VistaProductos {
         return stock;
     }
 
+    // Obtiene el talle del producto
     private String obtenerTalleValido() {
         System.out.print("Talle del producto: ");
         return scanner.next();
